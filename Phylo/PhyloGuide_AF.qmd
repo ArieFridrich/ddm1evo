@@ -1,0 +1,63 @@
+---
+title: "Phylogenetic Analysis"
+author: "Arie Fridrich"
+format: html
+editor: visual
+---
+
+## Introduction
+
+I made this workflow to help anyone interested in having a practical guide for performing phylogenetic analysis at a relatively large scale and know which factors to consider. I wish to credit Dr. Chung Hyun Cho for his patience and teaching the conceptss presented in this workflow.
+
+## Invest in the collection of data sets
+
+Download the the [eukaryota_odb10.2020-09-10.tar.gz](https://busco-data.ezlab.org/v5/data/lineages/eukaryota_odb10.2020-09-10.tar.gz) data base (or any other of interest) from <https://busco.ezlab.org/>.
+
+```{bash}
+cd /groups/berger/user/arie.fridrich/Paper_MpAtDDM1/ddm1evo/Phylo/
+wget https://busco-data.ezlab.org/v5/data/lineages/eukaryota_odb10.2020-09-10.tar.gz
+```
+
+This dataset contains sequences of a set of conserved eukaryotic genes that can be used to asses completeness of genomes. Now we need to put or hand on a set of fasta files for the analysis. I will look at Nematostella, Human, Arabidopsis, Marchantia, Physco and Cm.
+
+Proteomes should have represetative gene models and ideally not isoforms.
+
+```{bash}
+#Nematostella: NV2 versio from stowers. 
+#from eukProt V3. Human: EP00075, Nematostella: EP00110.
+wget http://evocellbio.com/SAGdb/images/TCS.tar.gz
+#Arabidopsis: https://www.arabidopsis.org/download/index-auto.jsp?dir=%2Fdownload_files%2FProteins%2FAraport11_protein_lists/Araport11_pep_20220914.gz
+```
+
+Example how I parse a fasta file to remove isoforms in R:
+
+```{r message = FALSE, warning = FALSE}
+# I will be using the tidysq package for importing the fasta file to R https://rdrr.io/github/michbur/tidysq/, so first I will install it:
+install.packages("tidysq")
+
+# Load packeges need for the parsing:
+library(tidyverse)
+library(tidysq)
+
+
+setwd("/groups/berger/user/arie.fridrich/Paper_MpAtDDM1/ddm1evo/Phylo/")
+
+
+```
+
+The Purpose ssd fRunning Cosde
+
+When you click the **Render** button a document will be generated that includes both content and the output of embedded code. You can embed code like this:
+
+```{r}
+1 + 1
+```
+
+You can add options to executable code like this
+
+```{r}
+#| echo: false
+2 * 2
+```
+
+The `echo: false` option disables the printing of code (only output is displayed).
