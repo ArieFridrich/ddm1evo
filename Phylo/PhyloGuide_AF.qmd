@@ -32,16 +32,54 @@ wget http://evocellbio.com/SAGdb/images/TCS.tar.gz
 Example how I parse a fasta file to remove isoforms in R:
 
 ```{r message = FALSE, warning = FALSE}
-# I will be using the tidysq package for importing the fasta file to R https://rdrr.io/github/michbur/tidysq/, so first I will install it:
+# I will be using the tidysq package for importing the fasta file ro R:
+# https://github.com/BioGenies/tidysq,
+# https://rdrr.io/cran/tidysq/man/sq.html
+# so first I will install it:
 install.packages("tidysq")
+#for writing fasta (final step) I usually use: https://search.r-project.org/CRAN/refmans/microseq/html/readFasta.html
+install.packages("microseq")
 
 # Load packeges need for the parsing:
 library(tidyverse)
 library(tidysq)
 
-
+# Loading the Marchantia fasta file:
 setwd("/groups/berger/user/arie.fridrich/Paper_MpAtDDM1/ddm1evo/Phylo/")
+MpFasta <- read_fasta("selectedFasta/MpTak1v5.1_r2.protein.fasta")
 
+# Keeping only the longest isoform:
+MpFasta_parsed <- MpFasta %>%
+  mutate(ProtLen = get_sq_lengths(sq)) %>%
+  separate_wider_delim(name, delim = ".", names = c("new_name", "iso_num")) %>%
+  group_by(new_name) %>%
+  arrange(desc(ProtLen)) %>%
+  ungroup() %>%
+  distinct(new_name, .keep_all = TRUE) %>%
+  mutate(name = str_c(new_name, ".", iso_num)) %>%
+  select(sq, name)
+
+# Re-packing it into a fasta file:
+write_fasta(sq, name, "/try.fasta")
+
+
+```
+
+```{r}
+#delete when done.
+
+tt <- MpFasta %>%
+  mutate(ProtLen = get_sq_lengths(sq))
+
+tt <- MpFasta %>%
+  mutate(ProtLen = get_sq_lengths(sq)) %>%
+  separate_wider_delim(name, delim = ".", names = c("new_name", "iso_num")) %>%
+  group_by(new_name) %>%
+  arrange(desc(ProtLen)) %>%
+  ungroup() %>%
+  distinct(new_name, .keep_all = TRUE) %>%
+  mutate(name = str_c(new_name, ".", iso_num)) %>%
+  select(sq, name)
 
 ```
 
