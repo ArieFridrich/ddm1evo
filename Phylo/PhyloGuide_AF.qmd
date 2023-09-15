@@ -60,7 +60,9 @@ MpFasta_parsed <- MpFasta %>%
   select(sq, name)
 
 # Re-packing it into a fasta file:
-write_fasta(sq, name, "/try.fasta")
+sequences <- sq(as.character(MpFasta_parsed$sq))
+names <- MpFasta_parsed$name
+write_fasta(sequences, names, "selectedFasta/MpTak1v5.1_r2.protein.parsed_AF.fasta", width = 80)
 
 
 ```
