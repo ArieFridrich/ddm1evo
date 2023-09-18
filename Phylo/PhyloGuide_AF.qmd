@@ -46,7 +46,7 @@ library(tidysq)
 
 # Loading the Marchantia fasta file:
 setwd("/groups/berger/user/arie.fridrich/Paper_MpAtDDM1/ddm1evo/Phylo/")
-MpFasta <- read_fasta("selectedFasta/MpTak1v5.1_r2.protein.fasta")
+MpFasta <- read_fasta("selectedFasta/MpTak1v5.1_r2.protein.fasta", ignore_case = TRUE)
 
 # Keeping only the longest isoform:
 MpFasta_parsed <- MpFasta %>%
@@ -82,6 +82,46 @@ tt <- MpFasta %>%
   distinct(new_name, .keep_all = TRUE) %>%
   mutate(name = str_c(new_name, ".", iso_num)) %>%
   select(sq, name)
+
+```
+
+Write a short bash script that will run busco on multiple files in the folder invoke locally from within a folder:
+
+```{bash}
+
+num_files=$(ls | wc -l)
+sbatch 
+
+#content of : BuscoRunnerAF.sh
+
+#!/bin/bash
+# === begin SBATCH directives ===                                                                                                                                                  
+
+#SBATCH --partition=c
+#SBATCH --time=02:00:00
+#SBATCH --nodes=1
+#SBATCH --cpus-per-task=1
+#SBATCH --mem-per-cpu=8gb
+#SBATCH --qos=long
+#SBATCH -o job_%j.out
+#SBATCH --array=1-$num_files 
+# === end SBATCH directives ===
+
+# Load need modules:
+ml busco/5.2.2-foss-2018b-python-3.6.6
+mkdir BUSCO_outputs
+
+# Make array of files.
+arrayOfFiles=($(ls -1 *.fasta))
+CurrentLibrary=${SLURM_ARRAY_TASK_ID}
+CurrentLibrary=$((CurrentLibrary-1))
+
+# Run:
+echo "array of files is: " ${arrayOfFiles[@]}
+echo "Current file being processed is: " ${arrayOfFiles[${CurrentLibrary}]}
+CurrentFile = ${arrayOfFiles[${CurrentLibrary}]}
+
+busco -i ${CurrentFile} -f -m prot -l /groups/berger/user/arie.fridrich/Paper_MpAtDDM1/ddm1evo/Phylo/eukaryota_odb10 -o BUSCO_outputs/${CurrentFile}_BUSCO
 
 ```
 
